@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>services.hoard.saves</id>
+  <launchable type="desktop-id">services.hoard.saves.desktop</launchable>
+  <name>Hoard</name>
+  <summary>Sync and back up game saves</summary>
+
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>AGPL-3.0-only</project_license>
+
+  <developer id="services.hoard">
+    <name>Hoard</name>
+  </developer>
+
+  <url type="homepage">https://hoard.services</url>
+  <url type="bugtracker">https://github.com/rleeon/hoard/issues</url>
+  <url type="vcs-browser">https://github.com/rleeon/hoard</url>
+
+  <description>
+    <p>
+      Hoard syncs your game saves to your own server. It detects games
+      automatically, backs them up when you stop playing, and restores any
+      previous version.
+    </p>
+  </description>
+
+  <categories>
+    <category>Utility</category>
+  </categories>
+
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+  </supports>
+
+  <screenshots>
+    <screenshot type="default">
+      <image>https://hoard.services/WEB.png</image>
+      <caption>Tracked games, how much space they take and when they last went up</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://hoard.services/dashboard.png</image>
+      <caption>A card per game, with its cloud versions and a backup button</caption>
+    </screenshot>
+  </screenshots>
+
+  <content_rating type="oars-1.1" />
+
+  <releases>
+    <release version="1.2.0" date="2026-09-17" />
+    <release version="1.1.6" date="2026-09-02" />
+    <release version="1.1.5" date="2026-08-24" />
+  </releases>
+</component>

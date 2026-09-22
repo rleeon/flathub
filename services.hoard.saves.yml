@@ -1,0 +1,66 @@
+id: services.hoard.saves
+
+runtime: org.gnome.Platform
+runtime-version: "50"
+sdk: org.gnome.Sdk
+
+command: hoard-desktop
+
+finish-args:
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri
+  - --share=ipc
+  - --share=network
+  - --talk-name=org.kde.StatusNotifierWatcher
+  - --filesystem=xdg-run/tray-icon:create
+  # Cloud token is kept in the OS credential store (libsecret).
+  - --talk-name=org.freedesktop.secrets
+  # Saves live on arbitrary drives: Steam libraries, Proton and Wine prefixes,
+  # emulator folders, paths the user picks.
+  - --filesystem=host
+  # /var is excluded from host, and rpm-ostree distros mount extra drives there.
+  - --filesystem=/var/mnt
+
+modules:
+  - shared-modules/libappindicator/libappindicator-gtk3-12.10.json
+
+  - name: hoard-desktop
+    buildsystem: simple
+
+    sources:
+      - type: file
+        only-arches:
+          - x86_64
+        url: https://github.com/rleeon/hoard/releases/download/v1.2.0/Hoard_1.2.0_amd64.deb
+        sha256: c4c652c1a3279e301414bdc368178ecdc0ecc898ac916070d58fcf18472a6381
+        dest-filename: hoard.deb
+      - type: file
+        only-arches:
+          - aarch64
+        url: https://github.com/rleeon/hoard/releases/download/v1.2.0/Hoard_1.2.0_arm64.deb
+        sha256: c6b33ebd1b47151bc849bcb2ab182360ffe9d4151d8a01ce418022e3089aa61a
+        dest-filename: hoard.deb
+      - type: file
+        path: services.hoard.saves.metainfo.xml
+
+    build-commands:
+      - mkdir -p deb-extract
+      - ar -x hoard.deb --output deb-extract
+      - tar -C deb-extract -xf deb-extract/data.tar.*
+      - |
+        for bin in deb-extract/usr/bin/*; do
+          install -Dm755 "$bin" "/app/bin/$(basename "$bin")"
+        done
+      - |
+        desktop_src="$(ls deb-extract/usr/share/applications/*.desktop | head -n1)"
+        sed 's/^Icon=.*/Icon=services.hoard.saves/' "$desktop_src" > services.hoard.saves.desktop
+        install -Dm644 services.hoard.saves.desktop /app/share/applications/services.hoard.saves.desktop
+      - |
+        for dir in deb-extract/usr/share/icons/hicolor/*/apps; do
+          size="$(basename "$(dirname "$dir")")"
+          src="$(ls "$dir"/* | head -n1)"
+          ext="${src##*.}"
+          install -Dm644 "$src" "/app/share/icons/hicolor/$size/apps/services.hoard.saves.$ext"
+        done
+      - install -Dm644 services.hoard.saves.metainfo.xml /app/share/metainfo/services.hoard.saves.metainfo.xml
